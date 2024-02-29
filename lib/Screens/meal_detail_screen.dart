@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:meals_app/Model/meal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meals_app/providers/fav_providers.dart';
@@ -25,18 +26,33 @@ class MealDetailScreen extends ConsumerWidget {
                   .read(favMealProvider.notifier)
                   .toggleMEalFavouriteStatus(meal);
             },
-            icon: Icon(isFav? Icons.star: Icons.star_border),
+            icon: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (child, animation) {
+                return RotationTransition(
+                  turns: Tween(begin: 0.6, end: 1.0).animate(animation),
+                  child: child,
+                );
+              },
+              child: Icon(
+                isFav ? Icons.star : Icons.star_border,
+                key: ValueKey(isFav),
+              ),
+            ),
           )
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Image.network(
-              meal.imageUrl,
-              height: 300,
-              width: double.infinity,
-              fit: BoxFit.cover,
+            Hero(
+              tag: meal.id,
+              child: Image.network(
+                meal.imageUrl,
+                height: 300,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
             const SizedBox(
               height: 14,
